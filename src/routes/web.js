@@ -8,6 +8,7 @@ const router = express.Router();
 const initWebRoutes = (app) => {
     router.get('/', homeController.handleHelloWorld);
     router.get('/users', userController.handleGetUsers);
+    router.post('/users/store', userController.handleStoreNewUser);
 
     return app.use('/', router);
 }
