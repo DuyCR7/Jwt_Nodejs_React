@@ -25,7 +25,7 @@ const createNewUser = async (email, password, username) => {
     let hashPass = hashUserPassword(password);
 
     try {
-        const sql = 'INSERT INTO users (email, password, username) VALUES (?, ?, ?)';
+        const sql = 'INSERT INTO user (email, password, username) VALUES (?, ?, ?)';
         const values = [email, hashPass, username];
       
         const [result, fields] = await connection.execute(sql, values);
@@ -43,7 +43,7 @@ const getUsersList = async () => {
         Promise: bluebird,
       });
     try {
-        const sql = 'SELECT * FROM users';
+        const sql = 'SELECT * FROM user';
       
         const [rows, fields] = await connection.execute(sql);
       
@@ -61,7 +61,7 @@ const deleteUser = async (id) => {
         Promise: bluebird,
       });
     try {
-        const sql = 'DELETE FROM users WHERE id = ? LIMIT 1';
+        const sql = 'DELETE FROM user WHERE id = ? LIMIT 1';
         const values = [id];
       
         const [result, fields] = await connection.execute(sql, values);
@@ -78,7 +78,7 @@ const getUserById = async (id) => {
         Promise: bluebird,
       });
     try {
-        const sql = 'SELECT * FROM users WHERE id =?';
+        const sql = 'SELECT * FROM user WHERE id =?';
         const values = [id];
       
         const [rows, fields] = await connection.execute(sql, values);
@@ -98,7 +98,7 @@ const updateUser = async (email, username, id) => {
       });
     
     try {
-        const sql = 'UPDATE users SET email = ?, username = ? WHERE id = ? LIMIT 1';
+        const sql = 'UPDATE user SET email = ?, username = ? WHERE id = ? LIMIT 1';
         const values = [email, username, id];
 
         const [result, fields] = await connection.execute(sql, values);
