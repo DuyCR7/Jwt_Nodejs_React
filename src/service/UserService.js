@@ -18,7 +18,7 @@ const createNewUser = async (email, password, username) => {
     let hashPass = hashUserPassword(password);
 
     try {
-      await db.User.save({
+      await db.User.create({
         email: email,
         password:  hashPass,
         username: username,
