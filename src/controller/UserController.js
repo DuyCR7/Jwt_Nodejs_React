@@ -28,10 +28,8 @@ const getEditUserPage = async (req, res) => {
 
     let user = await userService.getUserById(id);
     
-    let userEdit = {}
-    if (user && user.length > 0) {
-        userEdit = user[0];
-    }
+    let userEdit = {};
+    userEdit = user;
 
     return res.render('user-edit.ejs', { userEdit: userEdit });
 }
