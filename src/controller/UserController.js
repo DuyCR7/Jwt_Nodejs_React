@@ -1,21 +1,55 @@
 import userService from '../service/UserService';
 
-const handleGetUsers = (req, res) => {
-    return res.render('user.ejs');
+const handleGetUsers = async (req, res) => {
+    let userList = await userService.getUsersList();
+
+    return res.render('user.ejs', { userList: userList });
 }
 
-const handleStoreNewUser = (req, res) => {
+const handleStoreNewUser = async (req, res) => {
     // return res.json(req.body);
     let email = req.body.email;
     let password = req.body.password;
     let username = req.body.username;
 
-    userService.createNewUser(email, password, username);
+    await userService.createNewUser(email, password, username);
 
-    return res.send('Create user successfully!');
+    return res.redirect('/users');
+}
+
+const handleDeleteUser = async (req, res) => {
+    await userService.deleteUser(req.params.id);
+
+    return res.redirect('/users');
+}
+
+const getEditUserPage = async (req, res) => {
+    let id = req.params.id;
+
+    let user = await userService.getUserById(id);
+    
+    let userEdit = {}
+    if (user && user.length > 0) {
+        userEdit = user[0];
+    }
+
+    return res.render('user-edit.ejs', { userEdit: userEdit });
+}
+
+const handleUpdateUser = async (req, res) => {
+    let email = req.body.email;
+    let username = req.body.username;
+    let id = req.body.id;
+
+    await userService.updateUser(email, username, id);
+
+    return res.redirect('/users');
 }
 
 module.exports = {
     handleGetUsers,
-    handleStoreNewUser
+    handleStoreNewUser,
+    handleDeleteUser,
+    getEditUserPage,
+    handleUpdateUser
 }
