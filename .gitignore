@@ -1,3 +1,7 @@
 .env
 node_modules
 node_modules/*
+.idea/JwtBackend.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
