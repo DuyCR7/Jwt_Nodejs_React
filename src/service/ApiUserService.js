@@ -105,11 +105,17 @@ const updateUser = async (data) => {
 
 const deleteUser = async (id) => {
     try {
-        await db.User.delete({
+        await db.User.destroy({
             where: {
                 id: id
             }
         })
+
+        return {
+            EM: "Delete user successfully!",
+            EC: 0,
+            DT: ''
+        }
     } catch (e) {
         console.log(e);
         return {
