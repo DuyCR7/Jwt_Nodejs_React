@@ -1,7 +1,10 @@
 import db from "../models/index";
 import bcrypt from "bcryptjs";
+import { Op } from "sequelize";
 
 const salt = bcrypt.genSaltSync(10);
+
+// api register
 
 const hashUserPassword = (userPassword) => {
   let hashPassword = bcrypt.hashSync(userPassword, salt);
@@ -69,16 +72,65 @@ const registerNewUser = async (rawUserData) => {
       EM: "Create user account successfully!",
       EC: 0,
     };
+  } catch (e) {
+    console.log(e);
+    return {
+      EM: "Something went wrongs!",
+      EC: -1,
+    };
+  }
+};
+
+// api login
+
+const checkPassword = (inputPassword, hashPassword) => {
+  return bcrypt.compareSync(inputPassword, hashPassword); // true or false
+};
+
+const loginUser = async (rawUserData) => {
+  try {
+    let user = await db.User.findOne({
+      where: {
+        [Op.or]: [
+          { email: rawUserData.valueLogin },
+          { phone: rawUserData.valueLogin },
+        ],
+      },
+    });
+
+    // console.log("Check user js object: ", user.get({ plain: true}));
+    // console.log("Check user sequelize object: ", user);
+    if (user) {
+      let isPasswordCorrect = checkPassword(
+        rawUserData.password,
+        user.password
+      );
+      if (isPasswordCorrect) {
+        return {
+          EM: "Login successfully!",
+          EC: 0,
+          DT: "",
+        };
+      }
+    }
+
+    console.log(">>> Not found user", rawUserData.valueLogin, "password", rawUserData.password);
+    return {
+      EM: "Your email/phone number or password is incorrect!",
+      EC: 1,
+      DT: "",
+    };
 
   } catch (e) {
     console.log(e);
     return {
-        EM: 'Something went wrongs!',
-        EC: -1
-    }
+      EM: "Something went wrongs!",
+      EC: -1,
+    };
   }
 };
 
 module.exports = {
   registerNewUser,
+  loginUser,
 };
