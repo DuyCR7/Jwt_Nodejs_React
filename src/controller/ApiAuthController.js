@@ -1,4 +1,4 @@
-import apiService from '../service/ApiService';
+import apiService from '../service/ApiAuthService';
 
 // 0: thành công
 // 1: validation
