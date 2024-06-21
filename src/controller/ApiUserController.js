@@ -2,13 +2,28 @@ import apiUserService from "../service/ApiUserService";
 
 const readFunc = async (req, res) => {
     try {
-        let data = await apiUserService.getAllUsers();
+        // console.log(req.query);
+        if(req.query.page && req.query.limit){
+            let page = req.query.page
+            let limit = req.query.limit
 
-        return res.status(200).json({
-            EM: data.EM,   // error message
-            EC: data.EC,   // error code
-            DT: data.DT,   // data
-        });
+            let data = await apiUserService.getUserWithPagination(+page, +limit);
+
+            return res.status(200).json({
+                EM: data.EM,   // error message
+                EC: data.EC,   // error code
+                DT: data.DT,   // data
+            });
+        } else {
+            let data = await apiUserService.getAllUsers();
+
+            return res.status(200).json({
+                EM: data.EM,   // error message
+                EC: data.EC,   // error code
+                DT: data.DT,   // data
+            });
+        }
+    
     } catch (e) {
         console.log(e);
         return res.status(500).json({
