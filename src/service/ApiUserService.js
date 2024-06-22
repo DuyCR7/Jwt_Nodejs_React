@@ -1,8 +1,55 @@
 import db from "../models/index";
+import bcrypt from "bcryptjs";
+
+const salt = bcrypt.genSaltSync(10);
+
+const hashUserPassword = (userPassword) => {
+  let hashPassword = bcrypt.hashSync(userPassword, salt);
+  return hashPassword;
+};
+
+const checkEmailExists = async (email) => {
+    let user = await db.User.findOne({
+      where: {
+        email: email,
+      },
+    });
+  
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  
+  const checkPhoneExists = async (phone) => {
+    let user = await db.User.findOne({
+      where: {
+        phone: phone,
+      },
+    });
+  
+    if (user) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+const validateEmail = (email) => {
+    return String(email)
+        .toLowerCase()
+        .match(
+            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        );
+};
 
 const getAllUsers = async () => {
     try {
         let users = await db.User.findAll({
+            order: [
+                ['id', 'DESC']
+            ],
             attributes: ['id', 'email', 'username', 'phone', 'sex'],
             include: {model: db.Group, attributes: ['name', 'description']}
         });
@@ -35,6 +82,9 @@ const getUserWithPagination = async (page, limit) => {
         let offset = (page - 1) * limit;
 
         const { count, rows } = await db.User.findAndCountAll({
+            order: [
+                ['id', 'DESC']
+            ],
             offset: offset,
             limit: limit,
             attributes: ['id', 'email', 'username', 'phone', 'sex'],
@@ -63,11 +113,50 @@ const getUserWithPagination = async (page, limit) => {
     }
 }
 
-const createUser = async (data) => {
+const createUser = async (rawUserData) => {
     try {
-        await db.User.create({
+        // check email/phone number are exists
+        let isEmailExists = await checkEmailExists(rawUserData.email);
+        if (isEmailExists === true) {
+          return {
+            EM: "Email is already exists!",
+            EC: 1,
+          };
+        }
 
-        });
+        if(!validateEmail(rawUserData.email)) {
+            return {
+                EM: "Email is not valid!",
+                EC: 1,
+            };
+        }
+
+        let isPhoneExists = await checkPhoneExists(rawUserData.phone);
+        if (isPhoneExists === true) {
+          return {
+            EM: "Phone number is already exists!",
+            EC: 1,
+          };
+        }
+
+        if (rawUserData.password.length <= 3) {
+            return {
+                EM: "Password must have more than 3 letters!",   // error message
+                EC: 1,   // error code
+                DT: '',   // data
+            }
+        }
+
+        // hash user password
+        let hashPassword = hashUserPassword(rawUserData.password);
+
+        await db.User.create({...rawUserData, password: hashPassword});
+
+        return {
+            EM: "Create new user successfully!",
+            EC: 0,
+            DT: []
+        }
     } catch (e) {
         console.log(e);
         return {
