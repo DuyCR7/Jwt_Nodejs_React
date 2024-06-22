@@ -50,8 +50,8 @@ const getAllUsers = async () => {
             order: [
                 ['id', 'DESC']
             ],
-            attributes: ['id', 'email', 'username', 'phone', 'sex'],
-            include: {model: db.Group, attributes: ['name', 'description']}
+            attributes: ['id', 'email', 'username', 'phone', 'sex', 'address'],
+            include: {model: db.Group, attributes: ['id', 'name', 'description']}
         });
         if (users) {
             return {
@@ -87,8 +87,8 @@ const getUserWithPagination = async (page, limit) => {
             ],
             offset: offset,
             limit: limit,
-            attributes: ['id', 'email', 'username', 'phone', 'sex'],
-            include: {model: db.Group, attributes: ['name', 'description']}
+            attributes: ['id', 'email', 'username', 'phone', 'sex', 'address'],
+            include: {model: db.Group, attributes: ['id', 'name', 'description']}
         })
 
         let data = {
@@ -121,6 +121,7 @@ const createUser = async (rawUserData) => {
           return {
             EM: "Email is already exists!",
             EC: 1,
+            DT: "email"
           };
         }
 
@@ -128,6 +129,7 @@ const createUser = async (rawUserData) => {
             return {
                 EM: "Email is not valid!",
                 EC: 1,
+                DT: "email"
             };
         }
 
@@ -136,6 +138,7 @@ const createUser = async (rawUserData) => {
           return {
             EM: "Phone number is already exists!",
             EC: 1,
+            DT: "phone"
           };
         }
 
@@ -143,7 +146,7 @@ const createUser = async (rawUserData) => {
             return {
                 EM: "Password must have more than 3 letters!",   // error message
                 EC: 1,   // error code
-                DT: '',   // data
+                DT: "password",   // data
             }
         }
 
@@ -169,18 +172,42 @@ const createUser = async (rawUserData) => {
 
 const updateUser = async (data) => {
     try {
+        if(!data.groupId){
+            return {
+                EM: "Group is required!",
+                EC: 1,
+                DT: "groupId"
+            }
+        }
+
         let user = await db.User.findOne({
             where: {
                 id: data.id
             }
         })
+        
         if (user) {
             // update
-            user.save({
-
+            await user.update({
+                username: data.username,
+                address: data.address,
+                sex: data.sex,
+                groupId: data.groupId
             });
+
+            return {
+                EM: "Update user successfully!",
+                EC: 0,
+                DT: ''
+            }
+
         } else {
             // not found
+            return {
+                EM: "User not found!",
+                EC: 1,
+                DT: ""
+            }
         }
     } catch (e) {
         console.log(e);
