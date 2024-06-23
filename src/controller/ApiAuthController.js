@@ -45,6 +45,10 @@ const handleLogin = async (req, res) => {
     try {
         let data = await apiService.loginUser(req.body);
 
+        // set cookie
+        // thuộc tính httpOnly giúp nâng cao bảo mật cookie, phía client không lấy được
+        res.cookie("jwt", data.DT.access_token, { httpOnly: true });
+
         return res.status(200).json({
             EM: data.EM,   // error message
             EC: data.EC,   // error code
