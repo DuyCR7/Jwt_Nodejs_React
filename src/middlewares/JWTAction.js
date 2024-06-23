@@ -42,6 +42,8 @@ const checkUserJWT = (req, res, next) => {
         console.log("Check: ",decoded);
         if (decoded) {
             req.user = decoded; // đính kèm thêm user vào req
+            req.token = token;
+            
             next();
         } else {
             return res.status(401).json({
@@ -62,13 +64,13 @@ const checkUserJWT = (req, res, next) => {
 }
 
 const checkUserPermission = (req, res, next) => {
-    if(nonSecurePaths.includes(req.path)) return next();
+    if(nonSecurePaths.includes(req.path) || req.path === '/account') return next();
 
     if(req.user){
         let email = req.user.email;
         let roles = req.user.groupWithRoles.Roles;
 
-        console.log(req.path);
+        // console.log(req.path);
 
         let currentUrl = req.path;
         if(!roles || roles.length === 0){
