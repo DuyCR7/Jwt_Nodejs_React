@@ -26,6 +26,11 @@ configViewEngine(app);
 initWebRoutes(app);
 initApiRoutes(app);
 
+// req => middleware => res
+app.use((req, res) => {
+    return res.send("404 Not Found!");
+});
+
 const POST = process.env.PORT || 8080;
 app.listen(POST, () => {
     console.log(`Server is running on port ${POST}`);
