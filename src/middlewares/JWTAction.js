@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { decode } from 'jsonwebtoken';
 require("dotenv").config();
 
 // tạo token
@@ -18,18 +18,84 @@ const createJWT = (payload) => {
 // giải mã
 const verifyToken = (token) => {
     let key = process.env.JWT_SECRET;
-    let data = null;
+    let decoded = null;
 
     try {
-        let decoded = jwt.verify(token, key);
-        data = decoded;
+        decoded = jwt.verify(token, key);
     } catch (err) {
         console.log(err);
     }
-    return data;
+    return decoded;
+}
+
+// middleware
+const checkUserJWT = (req, res, next) => {
+    let cookies = req.cookies;   // lấy cookie người dùng gửi lên
+    if(cookies && cookies.jwt){
+        let token = cookies.jwt;
+
+        let decoded = verifyToken(token);
+        console.log("Check: ",decoded);
+        if (decoded) {
+            req.user = decoded; // đính kèm thêm user vào req
+            next();
+        } else {
+            return res.status(401).json({
+                EM: 'Not authenticated!',   // error message
+                EC: -1,   // error code
+                DT: '',   // data
+            })
+        }
+
+        // console.log("My Jwt: ", cookies.jwt);
+    } else {
+        return res.status(401).json({
+            EM: 'Not authenticated!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
+}
+
+const checkUserPermission = (req, res, next) => {
+    if(req.user){
+        let email = req.user.email;
+        let roles = req.user.groupWithRoles.Roles;
+
+        console.log(req.path);
+
+        let currentUrl = req.path;
+        if(!roles || roles.length === 0){
+            return res.status(403).json({
+                EM: `You don't permission to access!`,   // error message
+                EC: -1,   // error code
+                DT: '',   // data
+            })
+        }
+
+        let canAccess = roles.some((item) => item.url === currentUrl);
+        if(canAccess === true) {
+            next();
+        } else {
+            return res.status(403).json({
+                EM: `You don't permission to access!`,   // error message
+                EC: -1,   // error code
+                DT: '',   // data
+            })
+        }
+
+    } else {
+        return res.status(401).json({
+            EM: 'Not authenticated!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
 }
 
 module.exports = {
     createJWT,
     verifyToken,
+    checkUserJWT,
+    checkUserPermission
 }

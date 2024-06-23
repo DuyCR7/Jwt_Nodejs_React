@@ -47,7 +47,7 @@ const handleLogin = async (req, res) => {
 
         // set cookie
         // thuộc tính httpOnly giúp nâng cao bảo mật cookie, phía client không lấy được
-        res.cookie("jwt", data.DT.access_token, { httpOnly: true });
+        res.cookie("jwt", data.DT.access_token, { httpOnly: true, maxAge: 60 * 60 * 1000 });
 
         return res.status(200).json({
             EM: data.EM,   // error message
