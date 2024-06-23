@@ -9,7 +9,7 @@ const createJWT = (payload) => {
     let token = null;
 
     try {
-        token = jwt.sign(payload, key);
+        token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRES_IN});
     } catch (err) {
         console.log(err);
     }
@@ -43,7 +43,7 @@ const checkUserJWT = (req, res, next) => {
         if (decoded) {
             req.user = decoded; // đính kèm thêm user vào req
             req.token = token;
-            
+
             next();
         } else {
             return res.status(401).json({
