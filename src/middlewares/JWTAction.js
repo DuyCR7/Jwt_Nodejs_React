@@ -2,18 +2,12 @@ import jwt from 'jsonwebtoken';
 require("dotenv").config();
 
 // tạo token
-const createJWT = () => {
-    let payload = {
-        id: 1,
-        email: 'test',
-        name: 'test'
-    };
+const createJWT = (payload) => {
     let key = process.env.JWT_SECRET;
     let token = null;
 
     try {
         token = jwt.sign(payload, key);
-        console.log(token);
     } catch (err) {
         console.log(err);
     }
