@@ -30,16 +30,24 @@ const verifyToken = (token) => {
     return decoded;
 }
 
+const extractToken = (req) => {
+    if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+        return req.headers.authorization.split(' ')[1];
+    }
+    return null;
+}
+
 // middleware
 const checkUserJWT = (req, res, next) => {
     if(nonSecurePaths.includes(req.path)) return next();
 
     let cookies = req.cookies;   // lấy cookie người dùng gửi lên
-    if(cookies && cookies.jwt){
-        let token = cookies.jwt;
+    let tokenFromHeader = extractToken(req);
 
+    if((cookies && cookies.jwt) || tokenFromHeader){
+        let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader;
         let decoded = verifyToken(token);
-        console.log("Check: ",decoded);
+        // console.log("Check: ",decoded);
         if (decoded) {
             req.user = decoded; // đính kèm thêm user vào req
             req.token = token;
