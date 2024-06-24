@@ -1,7 +1,7 @@
 import jwt, { decode } from 'jsonwebtoken';
 require("dotenv").config();
 
-const nonSecurePaths = ['/', '/register', '/login']
+const nonSecurePaths = ['/logout', '/register', '/login']
 
 // tạo token
 const createJWT = (payload) => {
