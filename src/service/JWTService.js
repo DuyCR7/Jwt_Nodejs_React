@@ -9,6 +9,7 @@ const getGroupWithRoles = async (user) => {
         include: [
             {
                 model: db.Role,
+                where: { deleted: false },
                 attributes: ['id', 'url', 'description'],
                 through: { attributes: [] }
             }

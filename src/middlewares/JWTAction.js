@@ -73,7 +73,7 @@ const checkUserJWT = (req, res, next) => {
 
 const checkUserPermission = (req, res, next) => {
     if(nonSecurePaths.includes(req.path) || req.path === '/account') return next();
-
+    // console.log(req.path);
     if(req.user){
         let email = req.user.email;
         let roles = req.user.groupWithRoles.Roles;
@@ -89,7 +89,7 @@ const checkUserPermission = (req, res, next) => {
             })
         }
 
-        let canAccess = roles.some((item) => item.url === currentUrl);
+        let canAccess = roles.some((item) => item.url === currentUrl || currentUrl.includes(item.url));
         if(canAccess === true) {
             next();
         } else {
