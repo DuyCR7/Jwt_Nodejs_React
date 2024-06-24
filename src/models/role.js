@@ -16,7 +16,9 @@ module.exports = (sequelize, DataTypes) => {
   }
   Role.init({
     url: DataTypes.STRING,
-    description: DataTypes.STRING
+    description: DataTypes.STRING,
+    deleted: DataTypes.BOOLEAN,
+    deletedAt: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'Role',

@@ -8,7 +8,7 @@ const readFunc = async (req, res) => {
             let page = req.query.page
             let limit = req.query.limit
 
-            let data = await apiUserService.getUserWithPagination(+page, +limit);
+            let data = await apiRoleService.getRoleWithPagination(+page, +limit);
 
             return res.status(200).json({
                 EM: data.EM,   // error message
@@ -16,7 +16,7 @@ const readFunc = async (req, res) => {
                 DT: data.DT,   // data
             });
         } else {
-            let data = await apiUserService.getAllUsers();
+            let data = await apiRoleService.getAllRoles();
 
             return res.status(200).json({
                 EM: data.EM,   // error message
@@ -62,12 +62,12 @@ const updateFunc = async (req, res) => {
         // validate
 
         // create
-        let data = await apiUserService.updateUser(req.body);
+        let data = await apiRoleService.updateRole(req.body);
 
         return res.status(200).json({
             EM: data.EM,   // error message
             EC: data.EC,   // error code
-            DT: data.DT,   // data
+            DT: data.DT,   // data  
         });
     } catch (e) {
         console.log(e);
@@ -82,7 +82,7 @@ const updateFunc = async (req, res) => {
 const deleteFunc = async (req, res) => {
     try {
         // console.log(req.body);
-        let data = await apiUserService.deleteUser(req.body.id);
+        let data = await apiRoleService.deleteRole(req.body);
 
         return res.status(200).json({
             EM: data.EM,   // error message
