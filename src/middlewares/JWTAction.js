@@ -83,7 +83,7 @@ const checkUserPermission = (req, res, next) => {
         let currentUrl = req.path;
         if(!roles || roles.length === 0){
             return res.status(403).json({
-                EM: `You don't permission to access!`,   // error message
+                EM: `You don't have permission to access!`,   // error message
                 EC: -1,   // error code
                 DT: '',   // data
             })
@@ -94,7 +94,7 @@ const checkUserPermission = (req, res, next) => {
             next();
         } else {
             return res.status(403).json({
-                EM: `You don't permission to access!`,   // error message
+                EM: `You don't have permission to access!`,   // error message
                 EC: -1,   // error code
                 DT: '',   // data
             })
