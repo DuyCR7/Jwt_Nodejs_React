@@ -242,10 +242,43 @@ const deleteUser = async (id) => {
     }
 }
 
+const getUserById = async (id) => {
+    try {
+      let user = await db.User.findOne({
+        where: {
+          id: id
+        },
+        attributes: ['id', 'email', 'username', 'phone','sex', 'address']
+      });
+  
+      if (user) {
+        return {
+          EM: "Get User By Id Successfully!",
+          EC: 0,
+          DT: user,
+        };
+      }
+  
+      return {
+        EM: "Not found user!",
+        EC: 1,
+        DT: "",
+      };
+  
+    } catch (e) {
+      console.log(e);
+      return {
+        EM: "Something went wrongs!",
+        EC: -1,
+      };
+    }
+  }
+
 module.exports = {
     getAllUsers,
     getUserWithPagination,
     createUser,
     updateUser,
     deleteUser,
+    getUserById
 }

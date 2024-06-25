@@ -114,6 +114,7 @@ const loginUser = async (rawUserData) => {
         // test roles
         let groupWithRoles = await getGroupWithRoles(user);
         let payload = {
+          id: user.id,
           email: user.email,
           username: user.username,
           groupWithRoles,

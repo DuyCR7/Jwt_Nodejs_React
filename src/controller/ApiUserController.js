@@ -100,6 +100,7 @@ const deleteFunc = async (req, res) => {
 }
 
 const getUserAccount = async (req, res) => {
+    // console.log(req.user);
     return res.status(200).json({
         EM: 'Ok',   // error message
         EC: 0,   // error code
@@ -107,9 +108,30 @@ const getUserAccount = async (req, res) => {
             access_token: req.token,
             groupWithRoles: req.user.groupWithRoles,
             email: req.user.email,
-            username: req.user.username
+            username: req.user.username,
+            id: req.user.id
         },   // data
     }); 
+}
+
+const getUserByIdFunc = async (req, res) => {
+    try {
+        let id = req.params.id;
+        let data = await apiUserService.getUserById(id);
+
+        return res.status(200).json({
+            EM: data.EM,   // error message
+            EC: data.EC,   // error code
+            DT: data.DT,   // data
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: 'Error form server!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
 }
 
 module.exports = {
@@ -117,5 +139,6 @@ module.exports = {
     createFunc,
     updateFunc,
     deleteFunc,
-    getUserAccount
+    getUserAccount,
+    getUserByIdFunc
 }
