@@ -30,6 +30,7 @@ const initApiRoutes = (app) => {
     router.put("/role/update", apiRoleController.updateFunc);
     router.put("/role/delete", apiRoleController.deleteFunc);
     router.get("/role/by-group/:groupId", apiRoleController.getRoleByGroupFunc);
+    router.post("/role/assign-to-group", apiRoleController.assignRoleToGroupFunc);
 
     // group routes
     router.get("/group/read", apiGroupController.readFunc);
