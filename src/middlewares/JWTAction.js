@@ -1,7 +1,7 @@
 import jwt, { decode } from 'jsonwebtoken';
 require("dotenv").config();
 
-const nonSecurePaths = ['/logout', '/register', '/login']
+const nonSecurePaths = ['/logout', '/register', '/login', '/refresh-token']
 
 // tạo token
 const createJWT = (payload) => {
@@ -9,7 +9,20 @@ const createJWT = (payload) => {
     let token = null;
 
     try {
-        token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRES_IN});
+        token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRES_IN_ACCESS_TOKEN});
+    } catch (err) {
+        console.log(err);
+    }
+
+    return token;
+}
+
+const refreshJWT = (payload) => {
+    let key = process.env.JWT_SECRET;
+    let token = null;
+
+    try {
+        token = jwt.sign(payload, key, { expiresIn: process.env.JWT_EXPIRES_IN_REFRESH_TOKEN});
     } catch (err) {
         console.log(err);
     }
@@ -109,9 +122,49 @@ const checkUserPermission = (req, res, next) => {
     }
 }
 
+const createNewAccessToken = (token) => {
+    try {
+        
+        let decoded = verifyToken(token);
+        // console.log("Check decoded: ",decoded);
+        if (decoded) {
+            let payload = {
+                id: decoded.id,
+                email: decoded.email,
+                username: decoded.username,
+                groupWithRoles: decoded.groupWithRoles,
+            }
+
+            let new_access_token = createJWT(payload);
+            
+            return {
+                EM: "Create new access_token successfully!",
+                EC: 0,
+                DT: new_access_token,
+              };
+        } else {
+            return {
+                EM: 'Error!',   // error message
+                EC: -1,   // error code
+                DT: '',   // data
+            }
+        }
+
+    
+      } catch (e) {
+        console.log(e);
+        return {
+          EM: "Something went wrongs!",
+          EC: -1,
+        };
+      }
+}
+
 module.exports = {
     createJWT,
+    refreshJWT,
     verifyToken,
     checkUserJWT,
-    checkUserPermission
+    checkUserPermission,
+    createNewAccessToken
 }

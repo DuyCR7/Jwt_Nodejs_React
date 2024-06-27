@@ -3,7 +3,7 @@ import db from "../models/index";
 import bcrypt from "bcryptjs";
 import { Op } from "sequelize";
 import { getGroupWithRoles } from "./JWTService";
-import { createJWT } from "../middlewares/JWTAction"
+import { createJWT, refreshJWT } from "../middlewares/JWTAction"
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -122,12 +122,14 @@ const loginUser = async (rawUserData) => {
 
         // let token
         let token = createJWT(payload);
+        let refresh_token = refreshJWT(payload);
 
         return {
           EM: "Login successfully!",
           EC: 0,
           DT: {
             access_token: token,
+            refresh_token: refresh_token,
             groupWithRoles,
             email: user.email,
             username: user.username
