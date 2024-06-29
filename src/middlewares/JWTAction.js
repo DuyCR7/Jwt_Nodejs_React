@@ -57,6 +57,9 @@ const checkUserJWT = (req, res, next) => {
     let cookies = req.cookies;   // lấy cookie người dùng gửi lên
     let tokenFromHeader = extractToken(req);
 
+    // console.log("cookies: ", cookies.jwt);
+    // console.log("tokenFromHeader: ", tokenFromHeader);
+
     if((cookies && cookies.jwt) || tokenFromHeader){
         let token = cookies && cookies.jwt ? cookies.jwt : tokenFromHeader;
         let decoded = verifyToken(token);
