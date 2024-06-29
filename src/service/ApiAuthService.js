@@ -93,6 +93,10 @@ const checkPassword = (inputPassword, hashPassword) => {
 
 const loginUser = async (rawUserData) => {
   try {
+
+    const delay = rawUserData.delay || 0;
+    await new Promise(resolve => setTimeout(resolve, delay));
+
     let user = await db.User.findOne({
       where: {
         [Op.or]: [
