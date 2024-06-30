@@ -140,11 +140,96 @@ const assignRoleToGroupFunc = async (req, res) => {
     }
 }
 
+const deleteManyFunc = async (req, res) => {
+    // console.log("ids: ", req.body)
+    try {
+        let ids = req.body;
+        let data = await apiRoleService.deleteMany(ids);
+
+        return res.status(200).json({
+            EM: data.EM,   // error message
+            EC: data.EC,   // error code
+            DT: data.DT,   // data
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: 'Error form server!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
+}
+
+const readTrashFunc = async (req, res) => {
+    try {
+        let data = await apiRoleService.readTrash();
+
+        return res.status(200).json({
+            EM: data.EM,   // error message
+            EC: data.EC,   // error code
+            DT: data.DT,   // data
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: 'Error form server!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
+}
+
+const restoreFunc = async (req, res) => {
+    try {
+        // console.log(req.body);
+        let data = await apiRoleService.restoreRole(req.body);
+
+        return res.status(200).json({
+            EM: data.EM,   // error message
+            EC: data.EC,   // error code
+            DT: data.DT,   // data
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: 'Error form server!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
+}
+
+const restoreManyFunc = async (req, res) => {
+    // console.log("ids: ", req.body)
+    try {
+        let ids = req.body;
+        let data = await apiRoleService.restoreMany(ids);
+
+        return res.status(200).json({
+            EM: data.EM,   // error message
+            EC: data.EC,   // error code
+            DT: data.DT,   // data
+        });
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            EM: 'Error form server!',   // error message
+            EC: -1,   // error code
+            DT: '',   // data
+        })
+    }
+}
+
 module.exports = {
     readFunc,
     createFunc,
     updateFunc,
     deleteFunc,
     getRoleByGroupFunc,
-    assignRoleToGroupFunc
+    assignRoleToGroupFunc,
+    deleteManyFunc,
+    readTrashFunc,
+    restoreFunc,
+    restoreManyFunc
 }

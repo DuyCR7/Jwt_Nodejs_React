@@ -248,6 +248,124 @@ const assignRoleToGroup = async (data) => {
     }
 }
 
+const deleteMany = async (ids) => {
+    try {
+    
+        await db.Role.update({
+            deleted: true,
+            deletedAt: new Date()
+        },
+        {
+            where: {
+                id: ids
+            }
+        })
+
+        return {
+            EM: `Delete many roles successfully`,
+            EC: 0,
+            DT: []
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Something went wrongs!",
+            EC: -1,
+            DT: [],
+        };
+    }
+}
+
+const readTrash = async () => {
+    try {
+        
+        let data = await db.Role.findAll({
+            where: { deleted: true },
+            order: [['deletedAt', 'DESC'], ['id', 'DESC']]
+        });
+    
+        return {
+            EM: `Get all roles in trash successfully!`,
+            EC: 0,
+            DT: data
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Something went wrongs!",
+            EC: -1,
+            DT: '',
+        };
+    }
+}
+
+const restoreRole = async (data) => {
+    try {
+        let role = await db.Role.findOne({
+            where: {
+                id: data.id
+            }
+        })
+        
+        if (role) {
+            // update
+            await role.update({
+                deleted: false,
+                deletedAt: null
+            });
+
+            return {
+                EM: "Restore role successfully!",
+                EC: 0,
+                DT: ''
+            }
+
+        } else {
+            // not found
+            return {
+                EM: "Role not found!",
+                EC: 1,
+                DT: ""
+            }
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Something went wrongs!",
+            EC: -1,
+            DT: '',
+        };
+    }
+}
+
+const restoreMany = async (ids) => {
+    try {
+    
+        await db.Role.update({
+            deleted: false,
+            deletedAt: null
+        },
+        {
+            where: {
+                id: ids
+            }
+        })
+
+        return {
+            EM: `Restore many roles successfully!`,
+            EC: 0,
+            DT: []
+        }
+    } catch (e) {
+        console.log(e);
+        return {
+            EM: "Something went wrongs!",
+            EC: -1,
+            DT: [],
+        };
+    }
+}
+
 module.exports = {
     createRoles,
     getAllRoles,
@@ -255,5 +373,9 @@ module.exports = {
     getRoleWithPagination,
     updateRole,
     getRoleByGroup,
-    assignRoleToGroup
+    assignRoleToGroup,
+    deleteMany,
+    readTrash,
+    restoreRole,
+    restoreMany
 }
