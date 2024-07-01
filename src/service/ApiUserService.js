@@ -1,5 +1,6 @@
 import db from "../models/index";
 import bcrypt from "bcryptjs";
+import { Op } from "sequelize";
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -77,14 +78,22 @@ const getAllUsers = async () => {
     }
 }
 
-const getUserWithPagination = async (page, limit) => {
+const getUserWithPagination = async (page, limit, search, sortConfig) => {
     try {
         let offset = (page - 1) * limit;
+        let order = [[sortConfig.key, sortConfig.direction]];
+
+        const whereClause = {
+            [Op.or]: [
+                { email: { [Op.like]: `%${search}%` } },
+                // { username: { [Op.like]: `%${search}%` } },
+                // Add more fields here for searching
+            ]
+        }
 
         const { count, rows } = await db.User.findAndCountAll({
-            order: [
-                ['id', 'DESC']
-            ],
+            where: whereClause,
+            order: order,
             offset: offset,
             limit: limit,
             attributes: ['id', 'email', 'username', 'phone', 'sex', 'address'],

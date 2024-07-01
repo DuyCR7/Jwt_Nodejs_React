@@ -4,11 +4,14 @@ const readFunc = async (req, res) => {
     try {
         // console.log("Check req.user: ", req.user);
         // console.log(req.query);
+        let search = req.query.search || "";
+        let sortConfig = req.query.sort ? JSON.parse(req.query.sort) : {key: 'id', direction: 'ASC'};
+
         if(req.query.page && req.query.limit){
             let page = req.query.page
             let limit = req.query.limit
 
-            let data = await apiUserService.getUserWithPagination(+page, +limit);
+            let data = await apiUserService.getUserWithPagination(+page, +limit, search, sortConfig);
 
             return res.status(200).json({
                 EM: data.EM,   // error message
