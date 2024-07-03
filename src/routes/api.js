@@ -4,6 +4,8 @@ import apiUserController from "../controller/ApiUserController";
 import apiRoleController from "../controller/ApiRoleController";
 import apiGroupController from "../controller/ApiGroupController";
 import { checkUserJWT, checkUserPermission } from "../middlewares/JWTAction";
+import multer from 'multer';
+let upload = multer();
 
 const router = express.Router();
 
@@ -21,8 +23,8 @@ const initApiRoutes = (app) => {
 
     // user routes
     router.get("/user/read", apiUserController.readFunc);
-    router.post("/user/create", apiUserController.createFunc);
-    router.put("/user/update", apiUserController.updateFunc);
+    router.post("/user/create", upload.single('image'), apiUserController.createFunc);
+    router.put("/user/update", upload.single('image'), apiUserController.updateFunc);
     router.delete("/user/delete", apiUserController.deleteFunc); 
     router.get("/user/get-by-id/:id", apiUserController.getUserByIdFunc);
 

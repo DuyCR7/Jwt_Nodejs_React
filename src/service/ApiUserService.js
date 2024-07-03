@@ -51,7 +51,7 @@ const getAllUsers = async () => {
             order: [
                 ['id', 'DESC']
             ],
-            attributes: ['id', 'email', 'username', 'phone', 'sex', 'address'],
+            attributes: ['id', 'email', 'username', 'phone', 'sex', 'address', 'image'],
             include: {model: db.Group, attributes: ['id', 'name', 'description']}
         });
         if (users) {
@@ -96,7 +96,7 @@ const getUserWithPagination = async (page, limit, search, sortConfig) => {
             order: order,
             offset: offset,
             limit: limit,
-            attributes: ['id', 'email', 'username', 'phone', 'sex', 'address'],
+            attributes: ['id', 'email', 'username', 'phone', 'sex', 'address', 'image'],
             include: {model: db.Group, attributes: ['id', 'name', 'description']}
         })
 
@@ -122,10 +122,10 @@ const getUserWithPagination = async (page, limit, search, sortConfig) => {
     }
 }
 
-const createUser = async (rawUserData) => {
+const createUser = async (dataUser) => {
     try {
         // check email/phone number are exists
-        let isEmailExists = await checkEmailExists(rawUserData.email);
+        let isEmailExists = await checkEmailExists(dataUser.email);
         if (isEmailExists === true) {
           return {
             EM: "Email is already exists!",
@@ -134,7 +134,7 @@ const createUser = async (rawUserData) => {
           };
         }
 
-        if(!validateEmail(rawUserData.email)) {
+        if(!validateEmail(dataUser.email)) {
             return {
                 EM: "Email is not valid!",
                 EC: 1,
@@ -142,7 +142,7 @@ const createUser = async (rawUserData) => {
             };
         }
 
-        let isPhoneExists = await checkPhoneExists(rawUserData.phone);
+        let isPhoneExists = await checkPhoneExists(dataUser.phone);
         if (isPhoneExists === true) {
           return {
             EM: "Phone number is already exists!",
@@ -151,7 +151,7 @@ const createUser = async (rawUserData) => {
           };
         }
 
-        if (rawUserData.password.length <= 3) {
+        if (dataUser.password.length <= 3) {
             return {
                 EM: "Password must have more than 3 letters!",   // error message
                 EC: 1,   // error code
@@ -160,9 +160,9 @@ const createUser = async (rawUserData) => {
         }
 
         // hash user password
-        let hashPassword = hashUserPassword(rawUserData.password);
+        let hashPassword = hashUserPassword(dataUser.password);
 
-        await db.User.create({...rawUserData, password: hashPassword});
+        await db.User.create({...dataUser, password: hashPassword});
 
         return {
             EM: "Create new user successfully!",
@@ -201,7 +201,8 @@ const updateUser = async (data) => {
                 username: data.username,
                 address: data.address,
                 sex: data.sex,
-                groupId: data.groupId
+                groupId: data.groupId,
+                image: data.image
             });
 
             return {
@@ -257,7 +258,7 @@ const getUserById = async (id) => {
         where: {
           id: id
         },
-        attributes: ['id', 'email', 'username', 'phone','sex', 'address']
+        attributes: ['id', 'email', 'username', 'phone','sex', 'address', 'image']
       });
   
       if (user) {
