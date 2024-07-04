@@ -208,7 +208,7 @@ const updateUser = async (data) => {
             return {
                 EM: "Update user successfully!",
                 EC: 0,
-                DT: ''
+                DT: user
             }
 
         } else {
